@@ -9,6 +9,11 @@ const App = () => {
   const [transcript, setTranscript] = useState('');
 
   const startRecording = async () => {
+    if (Capacitor.platform == 'web') {
+      alert('Speech recognition is not available here');
+      return;
+    }
+
     const { speechRecognition } = await SpeechRecognition.requestPermissions();
     if (speechRecognition === 'granted') {
       SpeechRecognition.start({
@@ -25,6 +30,11 @@ const App = () => {
   };
   
   const stopRecording = async () => {
+    if (Capacitor.platform == 'web') {
+      alert('Speech recognition is not available here');
+      return;
+    }
+
     SpeechRecognition.removeAllListeners();
     await SpeechRecognition.stop();
   };
