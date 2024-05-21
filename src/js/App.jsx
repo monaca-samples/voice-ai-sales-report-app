@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import MicIcon from '@mui/icons-material/Mic';
+import StopIcon from '@mui/icons-material/Stop';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 
 const App = () => {
   const [transcript, setTranscript] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
 
   const startRecording = async () => {
     if (Capacitor.platform == 'web') {
@@ -26,6 +29,7 @@ const App = () => {
       SpeechRecognition.addListener('partialResults', (data) => {
         setTranscript(data.matches[0]);
       });
+      setIsRecording(true);
     }
   };
   
@@ -37,6 +41,7 @@ const App = () => {
 
     SpeechRecognition.removeAllListeners();
     await SpeechRecognition.stop();
+    setIsRecording(false);
   };
 
   return (
@@ -45,28 +50,35 @@ const App = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 2,
-        m: 2
+        height: '100vh',
       }}
     >
-      <Typography variant="h2" gutterBottom>
-        Speech to text
-      </Typography>
-
-      <Button variant="contained" color="primary" onClick={startRecording}>
-        Start Recording
-      </Button>
-
-      <Button variant="contained" color="secondary" onClick={stopRecording}>
-        Stop Recording
-      </Button>
-
-      <TextareaAutosize
-        minRows={10}
-        placeholder="Generated text will appear here..."
-        style={{ width: '100%', padding: '1em' }}
-        value={transcript}
-      />
+      <Box sx={{ p:4 }}>
+        <Typography variant="h3" gutterBottom>
+          Speech to text
+        </Typography>
+      </Box>
+  
+      <Box sx={{ width:'80%', flex: 1 }}>
+        <TextareaAutosize
+          minRows={10}
+          placeholder="Generated text will appear here..."
+          style={{ width: '100%', border: 'none'}}
+          value={transcript}
+        />
+      </Box>
+  
+      <Box sx={{ p:8, position: 'fixed', bottom: 0, width: '100%', display: 'flex', justifyContent: 'center' }}>
+        {!isRecording ? (
+          <Fab color="primary" onClick={startRecording}>
+            <MicIcon />
+          </Fab>
+        ) : (
+          <Fab color="secondary" onClick={stopRecording}>
+            <StopIcon />
+          </Fab>
+        )}
+      </Box>
     </Box>
   );
 }
