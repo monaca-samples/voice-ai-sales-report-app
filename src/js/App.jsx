@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
@@ -24,7 +24,7 @@ const App = () => {
         maxResults: 2,
         prompt: 'Say something',
         partialResults: true,
-        popup: true,
+        popup: false,
       });
       SpeechRecognition.addListener('partialResults', (data) => {
         setTranscript(data.matches[0]);
@@ -40,7 +40,9 @@ const App = () => {
     }
 
     SpeechRecognition.removeAllListeners();
-    await SpeechRecognition.stop();
+    if (Capacitor.platform === 'ios') { // Android stops automatically
+      await SpeechRecognition.stop();
+    }
     setIsRecording(false);
   };
 
