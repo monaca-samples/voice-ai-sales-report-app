@@ -8,10 +8,13 @@ import StopIcon from '@mui/icons-material/Stop';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 
 const App = () => {
-  const [transcript, setTranscript] = useState('');
+  const [transcript, setTranscript] = useState([]);
+  const [currentTranscript, setCurrentTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [continueRecording, setContinueRecording] = useState(false);
 
-  const startRecording = async () => {
+  const startRecording = async (continueRecording = false) => {
+    setContinueRecording(continueRecording);
     if (Capacitor.platform == 'web') {
       alert('Speech recognition is not available here');
       return;
@@ -34,8 +37,14 @@ const App = () => {
         timeoutId = setTimeout(stopRecording, 2 * 1000);
       }
 
+      //alert(continueRecording ? 'Continue recording...' : 'Start recording...')
+
       SpeechRecognition.addListener('partialResults', (data) => {
-        setTranscript(data.matches[0]);
+        if (continueRecording) {
+          setCurrentTranscript(data.matches[0]);
+        } else {
+          setTranscript([data.matches[0]]);
+        }
 
         if (Capacitor.platform === 'android') {
           // If a result is received, clear the timeout and set a new one
@@ -48,6 +57,14 @@ const App = () => {
   };
   
   const stopRecording = async () => {
+
+    // Combine the current transcript with the previous ones
+    if (continueRecording) {
+      setTranscript([...transcript, currentTranscript]);
+      setCurrentTranscript('');
+      setContinueRecording(false);
+    }
+
     if (Capacitor.platform == 'web') {
       alert('Speech recognition is not available here');
       return;
@@ -80,15 +97,22 @@ const App = () => {
           minRows={10}
           placeholder="Generated text will appear here..."
           style={{ width: '100%', border: 'none'}}
-          value={transcript}
+          value={[...transcript, currentTranscript].join(' ')}
         />
       </Box>
   
       <Box sx={{ p:8, position: 'fixed', bottom: 0, width: '100%', display: 'flex', justifyContent: 'center' }}>
         {!isRecording ? (
-          <Fab color="primary" onClick={startRecording}>
-            <MicIcon />
-          </Fab>
+          <Box display="flex" justifyContent="center" gap={2} width="100%">
+            <Fab color="primary" onClick={() => startRecording(false)}>
+              <MicIcon />
+            </Fab>
+            {transcript[0] && (
+              <Fab color="primary" onClick={() => startRecording(true)} style={{ minWidth: '100px' }}>
+                Continue
+              </Fab>
+            )}
+          </Box>
         ) : (
           <Fab color="secondary" onClick={stopRecording}>
             <StopIcon />
