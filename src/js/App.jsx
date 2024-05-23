@@ -26,10 +26,24 @@ const App = () => {
         partialResults: true,
         popup: false,
       });
+      setIsRecording(true);
+
+      let timeoutId = null;
+      if (Capacitor.platform === 'android') {
+        // Set a timeout to stop the recording after 5 seconds
+        timeoutId = setTimeout(stopRecording, 2 * 1000);
+      }
+
       SpeechRecognition.addListener('partialResults', (data) => {
         setTranscript(data.matches[0]);
+
+        if (Capacitor.platform === 'android') {
+          // If a result is received, clear the timeout and set a new one
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(stopRecording, 2 * 1000);
+        }
+
       });
-      setIsRecording(true);
     }
   };
   
