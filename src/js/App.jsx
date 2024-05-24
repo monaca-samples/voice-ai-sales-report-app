@@ -1,19 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
+import ReplayIcon from '@mui/icons-material/Replay';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/system';
 
 const App = () => {
   const [transcript, setTranscript] = useState([]);
   const [currentTranscript, setCurrentTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [continueRecording, setContinueRecording] = useState(false);
+  const [firstTime, setFirstTime] = useState(true);
 
   const startRecording = async (continueRecording = false) => {
+    setFirstTime(false);
     setContinueRecording(continueRecording);
     if (Capacitor.platform == 'web') {
       alert('Speech recognition is not available here');
@@ -36,8 +42,6 @@ const App = () => {
         // Set a timeout to stop the recording after 5 seconds
         timeoutId = setTimeout(stopRecording, 2 * 1000);
       }
-
-      //alert(continueRecording ? 'Continue recording...' : 'Start recording...')
 
       SpeechRecognition.addListener('partialResults', (data) => {
         if (continueRecording) {
@@ -77,6 +81,12 @@ const App = () => {
     setIsRecording(false);
   };
 
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      transform: 'scale(1) translate(-20%, -20%)',
+    },
+  }));
+
   return (
     <Box 
       sx={{
@@ -105,11 +115,33 @@ const App = () => {
         {!isRecording ? (
           <Box display="flex" justifyContent="center" gap={2} width="100%">
             <Fab color="primary" onClick={() => startRecording(false)}>
-              <MicIcon />
+            <Box position="relative">
+              <MicIcon/>
+              {!firstTime && (
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  badgeContent={<ReplayIcon fontSize='big'/>}
+                />
+              )}
+            </Box>
             </Fab>
             {transcript[0] && (
-              <Fab color="primary" onClick={() => startRecording(true)} style={{ minWidth: '100px' }}>
-                Continue
+              <Fab style={{ backgroundColor: 'green', color: 'white' }} onClick={() => startRecording(true)}>
+                <Box position="relative">
+                  <MicIcon color='inherit'/>
+                  <Badge
+                    overlap="circular"
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    }}
+                    badgeContent={<PlayArrowIcon fontSize='big' color='inherit'/>}
+                  />
+                </Box>
               </Fab>
             )}
           </Box>
