@@ -3,6 +3,7 @@ import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -87,6 +88,10 @@ const App = () => {
     },
   }));
 
+  const handleGenerateReport = () => {
+    alert('Generate Sales Report!');
+  };
+
   return (
     <Box 
       sx={{
@@ -98,7 +103,7 @@ const App = () => {
     >
       <Box sx={{ p:4 }}>
         <Typography variant="h3" gutterBottom>
-          Speech to text
+          Sales Report Generator
         </Typography>
       </Box>
   
@@ -111,9 +116,9 @@ const App = () => {
         />
       </Box>
   
-      <Box sx={{ p:8, position: 'fixed', bottom: 0, width: '100%', display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ p:6, position: 'fixed', bottom: 0, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {!isRecording ? (
-          <Box display="flex" justifyContent="center" gap={2} width="100%">
+          <Box display="flex" justifyContent="center" alignItems="center" gap={2} width="100%">
             <Fab color="primary" onClick={() => startRecording(false)}>
             <Box position="relative">
               <MicIcon/>
@@ -150,6 +155,11 @@ const App = () => {
             <StopIcon />
           </Fab>
         )}
+        <Box width="80%" mt={6}>
+          <Button variant="contained" color="primary" onClick={handleGenerateReport} fullWidth>
+            Generate Sales Report!
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
