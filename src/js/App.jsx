@@ -1,11 +1,25 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 
-const App = () => {
-  return (
-    <Typography variant="h1" gutterBottom>
-      Hi, this is a React app!
-    </Typography>
+import SpeechRecognition from "./screens/SpeechRecognition";
+import NewScreen from "./screens/NewScreen"; // Import your new screen
+
+const App =() => {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <SpeechRecognition />,
+    },
+    {
+      path: "/new-screen",
+      element: <NewScreen />,
+    },
+  ]);
+
+  return(
+    <RouterProvider router={router}/>
   );
 }
 
