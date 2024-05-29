@@ -1,10 +1,8 @@
 import React from 'react';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "/assets/vfs_fonts.js"
-import { Filesystem, Directory } from '@capacitor/filesystem';
 import { saveAs } from 'file-saver';
 import { Capacitor } from '@capacitor/core';
-import { FileOpener } from '@capacitor-community/file-opener';
 import { Browser } from '@capacitor/browser';
 
 pdfMake.vfs = pdfFonts;
