@@ -4,6 +4,10 @@ import pdfFonts from "/assets/vfs_fonts.js"
 import { saveAs } from 'file-saver';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import Fab from '@mui/material/Fab';
+import Box from '@mui/material/Box';
 
 pdfMake.vfs = pdfFonts;
 
@@ -102,8 +106,6 @@ const SalesReportEx = () => {
   return (
     <div>
       <h1>Sales Report</h1>
-      <button onClick={downloadPDF}>Download PDF</button>
-      <button onClick={downloadTXT}>Download TXT</button>
       <table>
         <thead>
           <tr>
@@ -126,6 +128,14 @@ const SalesReportEx = () => {
           ))}
         </tbody>
       </table>
+      <Box sx={{ p:6, position: 'fixed', bottom: 0, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <Fab style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' }} onClick={downloadPDF}>
+          <PictureAsPdfIcon />
+        </Fab>
+        <Fab style={{ backgroundColor: 'blue', color: 'white', marginLeft: '10px' }} onClick={downloadTXT}>
+          <TextFieldsIcon />
+        </Fab>
+    </Box>
     </div>
   );
 };
