@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import SalesReportEx from './../SalesReportEx'; // adjust the path as needed
 
 const NewScreen = () => {
   const location = useLocation();
@@ -8,6 +9,7 @@ const NewScreen = () => {
     <div>
       <h1>New Screen</h1>
       <p>{transcript}</p>
+      <SalesReportEx />
     </div>
   );
 };
