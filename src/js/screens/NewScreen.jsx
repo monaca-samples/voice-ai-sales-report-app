@@ -7,7 +7,6 @@ const NewScreen = () => {
 
   return (
     <div>
-      <h1>New Screen</h1>
       <p>{transcript}</p>
       <SalesReportEx />
     </div>
