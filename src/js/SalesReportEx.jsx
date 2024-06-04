@@ -3,13 +3,14 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "/assets/vfs_fonts.js"
 import { saveAs } from 'file-saver';
 import { Capacitor } from '@capacitor/core';
-import { Browser } from '@capacitor/browser';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { FileOpener } from '@capacitor-community/file-opener';
 
 pdfMake.vfs = pdfFonts;
 
@@ -39,48 +40,65 @@ const SalesReportEx = () => {
         ]
       };
       const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-      const pdfDataUrl = await new Promise((resolve, reject) => {
-        pdfDocGenerator.getDataUrl((dataUrl) => {
-          if (dataUrl) {
-            resolve(dataUrl);
-          } else {
-            reject('Failed to generate data URL for PDF');
-          }
-        });
-      }).then((dataUrl) => {
-        console.log('PDF data URL generated:', dataUrl);
-        return dataUrl;
-      }).catch((error) => {
-        console.error('Error generating PDF data URL:', error);
-        throw error;
-      });
   
       if (Capacitor.getPlatform() === 'web') {
+        const pdfDataUrl = await new Promise((resolve, reject) => {
+          pdfDocGenerator.getDataUrl((dataUrl) => {
+            if (dataUrl) {
+              resolve(dataUrl);
+            } else {
+              reject('Failed to generate data URL for PDF');
+            }
+          });
+        }).then((dataUrl) => {
+          console.log('PDF data URL generated:', dataUrl);
+          return dataUrl;
+        }).catch((error) => {
+          console.error('Error generating PDF data URL:', error);
+          throw error;
+        });
         const pdfBlob = await fetch(pdfDataUrl).then(res => res.blob());
         saveAs(pdfBlob, 'sales_report.pdf');
       } 
-      else if (Capacitor.getPlatform() === 'android') {
-        const pdfBuffer = await new Promise((resolve, reject) => {
-          pdfDocGenerator.getBuffer((buffer) => {
-            if (buffer) {
-              resolve(buffer);
-            } else {
-              reject('Failed to generate buffer for PDF');
+      else if (Capacitor.getPlatform() === 'ios' || Capacitor.getPlatform() === 'android') {
+        await new Promise((resolve, reject) => {
+          // Get the PDF as a buffer
+          pdfDocGenerator.getBuffer(async (buffer) => {
+            try {
+              // Convert the buffer to a base64 string
+              const base64Data = btoa(
+                new Uint8Array(buffer).reduce(
+                  (data, byte) => data + String.fromCharCode(byte),
+                  '',
+                ),
+              );
+
+              // Write the base64 string to a file
+              const result = await Filesystem.writeFile({
+                path: 'sales_report.pdf',
+                data: base64Data,
+                directory: Directory.Documents,
+              });
+
+              // Get the URL of the file
+              const fileUri = await Filesystem.getUri({
+                path: 'sales_report.pdf',
+                directory: Directory.Documents,
+              });
+
+              // Open the file
+              await FileOpener.open({
+                filePath: fileUri.uri,
+                mimeType: 'application/pdf',
+              });
+
+              // Resolve the promise when done
+              resolve();
+            } catch (error) {
+              // Reject the promise with the error
+              reject(error);
             }
           });
-        }).then((buffer) => {
-          console.log('PDF buffer generated:', buffer);
-          return buffer;
-        }).catch((error) => {
-          console.error('Error generating PDF buffer:', error);
-          throw error;
-        });
-      
-        const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
-        const blobUrl = URL.createObjectURL(blob);
-      
-        await Browser.open({ url: blobUrl }).catch((error) => {
-          console.error('Error opening PDF in browser:', error);
         });
       }
     } catch (error) {
@@ -98,9 +116,28 @@ const SalesReportEx = () => {
   
       if (Capacitor.getPlatform() === 'web') {
         window.open(blobUrl, '_blank');
-      } else if (Capacitor.getPlatform() === 'android') {
-        await Browser.open({ url: blobUrl }).catch((error) => {
-          console.error('Error opening text file in browser:', error);
+      } 
+      else if (Capacitor.getPlatform() === 'ios' || Capacitor.getPlatform() === 'android') {
+        // Convert the text to a base64 string
+        const base64Data = btoa(text);
+  
+        // Write the base64 string to a file
+        const result = await Filesystem.writeFile({
+          path: 'sales_report.txt',
+          data: base64Data,
+          directory: Directory.Documents,
+        });
+  
+        // Get the URL of the file
+        const fileUri = await Filesystem.getUri({
+          path: 'sales_report.txt',
+          directory: Directory.Documents,
+        });
+  
+        // Open the file
+        await FileOpener.open({
+          filePath: fileUri.uri,
+          mimeType: 'text/plain',
         });
       }
     } catch (error) {
