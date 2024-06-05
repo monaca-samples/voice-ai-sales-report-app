@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SalesReportEx from './../SalesReportEx';
 import geminiModel from './../gemini';
+import Box from '@mui/material/Box';
 
 const NewScreen = () => {
   const location = useLocation();
@@ -20,14 +21,16 @@ const NewScreen = () => {
   return (
     <div>
       <p>{transcript}</p>
-      <TextField
-        label="Prompt"
-        value={input}
-        onChange={e => setInput(e.target.value)}
-      />
-      <Button variant="contained" color="primary" onClick={fetchAnswer}>
-        Generate Answer
-      </Button>
+      <Box display="flex" flexDirection="column" gap={2}>
+        <TextField
+          label="Prompt"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={fetchAnswer}>
+          Generate Answer
+        </Button>
+      </Box>
       <SalesReportEx />
     </div>
   );
