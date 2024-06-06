@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import geminiModel from './../gemini';
 import Box from '@mui/material/Box';
 import htmlToPdf from './../htmlToPdf';
+import { Typography } from '@mui/material';
 
 const NewScreen = () => {
   const location = useLocation();
@@ -77,7 +78,12 @@ const NewScreen = () => {
         <Button variant="contained" color="primary" onClick={fetchAnswer}>
           Generate Answer
         </Button>
-        <Button variant="contained" color="primary" onClick={() => htmlToPdf(myHtml)}>
+
+        <Typography variant="h3" gutterBottom> Sales Report Example </Typography>
+
+        <div dangerouslySetInnerHTML={{ __html: myHtml }} />
+
+        <Button variant="contained" color="primary" onClick={() => htmlToPdf(myHtml)} style={{ pb: 5 }}>
           Generate PDF
         </Button> 
       </Box>
