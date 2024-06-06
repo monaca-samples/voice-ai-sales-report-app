@@ -22,7 +22,8 @@ const SpeechRecognitionScreen = () => {
 
   const navigate = useNavigate();
   const handleNavigateToNewScreen = () => {
-    navigate('/new-screen', { state: { transcript } });
+    //navigate('/new-screen', { state: { transcript } });
+    navigate('report-preview');
   };
 
   const startRecording = async (continueRecording = false) => {

@@ -17,7 +17,6 @@
     "@capacitor-community/speech-recognition": "^5.1.0",
     "@capacitor/android": "^5.0.0",
     "@capacitor/browser": "^5.2.0",
-    "@capacitor/camera": "^5.0.0",
     "@capacitor/core": "^5.0.0",
     "@capacitor/filesystem": "^5.2.1",
     "@capacitor/ios": "^5.0.0",
@@ -28,8 +27,7 @@
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
     "@vitejs/plugin-react": "^4.2.1",
-    "file-saver": "^2.0.5",
-    "pdfmake": "^0.2.10",
+    "html2pdf.js": "^0.10.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1"

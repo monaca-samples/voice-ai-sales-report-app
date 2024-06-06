@@ -1,16 +1,11 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import geminiModel from './../gemini';
 import Box from '@mui/material/Box';
 import htmlToPdf from './../htmlToPdf';
 import { Typography } from '@mui/material';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import Fab from '@mui/material/Fab';
 
-const NewScreen = () => {
-  const location = useLocation();
-  const transcript = location.state.transcript;
-  const [input, setInput] = useState('');
+const ReportPreviewDownload = () => {
 
   const myHtml = `
   <!DOCTYPE html>
@@ -58,37 +53,22 @@ const NewScreen = () => {
   </html>
   `;
 
-  const fetchAnswer = async () => {
-    const result = await geminiModel.generateContent(input);
-    const response = await result.response;
-    const text = response.text();
-    alert(text);
-  };
-
   return (
-    <div>
-      <p>{transcript}</p>
+    <Box display="flex" flexDirection="column" gap={2} mx={2}>
 
-      <Box display="flex" flexDirection="column" gap={2}>
-        <TextField
-          label="Prompt"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-        />
-        <Button variant="contained" color="primary" onClick={fetchAnswer}>
-          Generate Answer
-        </Button>
+      <Typography variant="h3" gutterBottom> Sales Report Preview</Typography>
+      <div dangerouslySetInnerHTML={{ __html: myHtml }} />
 
-        <Typography variant="h3" gutterBottom> Sales Report Example </Typography>
-
-        <div dangerouslySetInnerHTML={{ __html: myHtml }} />
-
-        <Button variant="contained" color="primary" onClick={() => htmlToPdf(myHtml)} style={{ pb: 5 }}>
-          Generate PDF
-        </Button> 
+      <Box sx={{ p:6, position: 'fixed', bottom: 0, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <Fab style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' }} onClick={() => htmlToPdf(myHtml)}>
+          <PictureAsPdfIcon />
+        </Fab>
+        <Fab style={{ backgroundColor: 'blue', color: 'white', marginLeft: '10px' }} onClick={() => {alert('Not implemented')}}>
+          <TextFieldsIcon />
+        </Fab>
       </Box>
-    </div>
+    </Box>
   );
 };
 
-export default NewScreen;
+export default ReportPreviewDownload;
