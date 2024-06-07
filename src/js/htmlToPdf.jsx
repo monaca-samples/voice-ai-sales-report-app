@@ -3,7 +3,7 @@ import { FileOpener } from '@capacitor-community/file-opener';
 import html2pdf from 'html2pdf.js';
 import { Capacitor } from '@capacitor/core';
 
-const handleCreatePdffromHtml = async (html) => {
+const handleCreatePdfFromHtml = async (html) => {
   const opt = {
     margin: 1,
     filename: 'sales_report.pdf',
@@ -30,7 +30,7 @@ const handleCreatePdffromHtml = async (html) => {
 
     try {
       // Save the PDF file to the device
-      const writeResult = await Filesystem.writeFile({
+      await Filesystem.writeFile({
         path: 'sales_report.pdf',
         data: base64String,
         directory: Directory.Documents,
@@ -53,4 +53,4 @@ const handleCreatePdffromHtml = async (html) => {
   }
 };
 
-export default handleCreatePdffromHtml;
+export default handleCreatePdfFromHtml;

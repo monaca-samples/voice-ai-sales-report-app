@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import htmlToPdf from './../htmlToPdf';
+import htmlToTxt from './../htmlToTxt';
 import { Typography } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
@@ -63,7 +64,7 @@ const ReportPreviewDownload = () => {
         <Fab style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' }} onClick={() => htmlToPdf(myHtml)}>
           <PictureAsPdfIcon />
         </Fab>
-        <Fab style={{ backgroundColor: 'blue', color: 'white', marginLeft: '10px' }} onClick={() => {alert('Not implemented')}}>
+        <Fab style={{ backgroundColor: 'blue', color: 'white', marginLeft: '10px' }} onClick={() => htmlToTxt(myHtml)}>
           <TextFieldsIcon />
         </Fab>
       </Box>
