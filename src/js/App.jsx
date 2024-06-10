@@ -4,7 +4,6 @@ import {
 } from "react-router-dom";
 
 import SpeechRecognition from "./screens/SpeechRecognition";
-import NewScreen from "./screens/NewScreen"; // Import your new screen
 import ReportPreviewDownload from "./screens/ReportPreviewDownload";
 
 const App =() => {
@@ -16,10 +15,6 @@ const App =() => {
     {
       path: "/report-preview",
       element: <ReportPreviewDownload />
-    },
-    {
-      path: "/new-screen",
-      element: <NewScreen />,
     },
   ]);
 

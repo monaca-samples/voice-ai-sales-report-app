@@ -12,6 +12,7 @@ import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import geminiModel from './../gemini';
 
 const SpeechRecognitionScreen = () => {
   const [transcript, setTranscript] = useState([]);
@@ -21,9 +22,15 @@ const SpeechRecognitionScreen = () => {
   const [firstTime, setFirstTime] = useState(true);
 
   const navigate = useNavigate();
-  const handleNavigateToNewScreen = () => {
-    //navigate('/new-screen', { state: { transcript } });
-    navigate('report-preview');
+  const handleGenerateReport = async () => {
+    // generate report
+    const input = transcript.join(' ') + "Generate a sales report with the previous input in html format. Only return the html";
+    const result = await geminiModel.generateContent(input);
+    const response = await result.response;
+    const text = response.text();
+    const htmlContent = text.replace(/```html\n|\n```/g, '');
+
+    navigate('report-preview', { state: { htmlContent } });
   };
 
   const startRecording = async (continueRecording = false) => {
@@ -159,7 +166,7 @@ const SpeechRecognitionScreen = () => {
           </Fab>
         )}
         <Box width="80%" mt={6}>
-          <Button variant="contained" color="primary" onClick={handleNavigateToNewScreen} fullWidth>
+          <Button variant="contained" color="primary" onClick={handleGenerateReport} fullWidth>
             Generate Sales Report!
           </Button>
         </Box>
