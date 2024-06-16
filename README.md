@@ -1,12 +1,3 @@
-## Created with Capacitor Create App
+## Voice-based AI Sales Report App
 
-This app was created using [`@capacitor/create-app`](https://github.com/ionic-team/create-capacitor-app),
-and comes with a very minimal shell for building an app.
-
-### Running this example
-
-To run the provided example, you can use `npm start` command.
-
-```bash
-npm start
-```
+Android and IOS app to generate flexible sales reports from voice recording. Uses GEMINI API to generate the report, which is the displayed to the user through a preview, allowing download in both .pdf and .txt formats. Developed with Capacitor.
