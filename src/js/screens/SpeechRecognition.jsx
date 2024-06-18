@@ -125,9 +125,11 @@ const SpeechRecognitionScreen = () => {
             height: '100%',
           }}
         >
-          <Typography variant="h3" gutterBottom>
-            Generating report...
-          </Typography>
+          <Box sx={{ p:4 }}>
+            <Typography variant="h3" gutterBottom>
+              Generating report...
+            </Typography>
+          </Box>
           <CircularProgress />
         </Box>
       ) : (
