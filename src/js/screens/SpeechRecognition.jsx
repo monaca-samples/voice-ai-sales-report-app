@@ -14,6 +14,8 @@ import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import geminiModel from './../gemini';
 import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const SpeechRecognitionScreen = () => {
   const [transcript, setTranscript] = useState([]);
@@ -22,19 +24,28 @@ const SpeechRecognitionScreen = () => {
   const [continueRecording, setContinueRecording] = useState(false);
   const [firstTime, setFirstTime] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
   // Generate Report
   const handleGenerateReport = async () => {
     setIsLoading(true);
-    const input = transcript.join(' ') + "Generate a sales report with the previous input in html format. Only return the html";
-    const result = await geminiModel.generateContent(input);
-    const response = await result.response;
-    const text = response.text();
-    const htmlContent = text.replace(/```html\n|\n```/g, '');
-    navigate('report-preview', { state: { htmlContent } });
-    setIsLoading(false);
+    try {
+      const input = transcript.join(' ') + "Generate a sales report with the previous input in html format. Only return the html";
+      const result = await geminiModel.generateContent(input);
+      const response = await result.response;
+      if (!response) {
+        throw new Error(response.text());
+      }
+      const text = response.text();
+      const htmlContent = text.replace(/```html\n|\n```/g, '');
+      navigate('report-preview', { state: { htmlContent } });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const startRecording = async (continueRecording = false) => {
@@ -115,6 +126,11 @@ const SpeechRecognitionScreen = () => {
         height: '100vh',
       }}
     >
+    <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
+      <Alert onClose={() => setError(null)} severity="error">
+        {error}
+      </Alert>
+    </Snackbar>
       {isLoading ? ( 
           <Box 
           sx={{
@@ -195,7 +211,9 @@ const SpeechRecognitionScreen = () => {
             </Box>
           </Box>
         </>
+        
       )}
+      
     </Box>
   );
 }
