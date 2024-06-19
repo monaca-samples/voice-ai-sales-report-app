@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import htmlToPdf from './../htmlToPdf';
 import htmlToTxt from './../htmlToTxt';
-import { Typography } from '@mui/material';
+import { Typography, Divider } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import Fab from '@mui/material/Fab';
@@ -24,7 +24,8 @@ const ReportPreviewDownload = () => {
           <ArrowBackIcon />
         </Fab>
       </Box>
-      <Typography variant="h3" gutterBottom> Sales Report Preview</Typography>
+      <Typography variant="h4" gutterBottom> Sales Report Preview</Typography>
+      <Divider />
       <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
       <Box sx={{ p:6, position: 'fixed', bottom: 0, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <Fab style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' }} onClick={() => htmlToPdf(htmlContent)}>

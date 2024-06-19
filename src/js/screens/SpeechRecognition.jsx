@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import MicIcon from '@mui/icons-material/Mic';
@@ -156,8 +157,8 @@ const SpeechRecognitionScreen = () => {
             <Typography variant="h3" gutterBottom>
               Sales Report Generator
             </Typography>
+            <Divider />
           </Box>
-      
           <Box sx={{ width:'80%', flex: 1 }}>
             <TextareaAutosize
               minRows={10}
