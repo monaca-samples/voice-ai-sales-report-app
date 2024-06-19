@@ -17,9 +17,12 @@ import geminiModel from './../gemini';
 import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { useLocation } from 'react-router-dom';
 
 const SpeechRecognitionScreen = () => {
-  const [transcript, setTranscript] = useState([]);
+  const location = useLocation();
+  const initialTranscript = [location.state?.transcript] || [];
+  const [transcript, setTranscript] = useState(initialTranscript);
   const [currentTranscript, setCurrentTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [continueRecording, setContinueRecording] = useState(false);
@@ -41,7 +44,7 @@ const SpeechRecognitionScreen = () => {
       }
       const text = response.text();
       const htmlContent = text.replace(/```html\n|\n```/g, '');
-      navigate('report-preview', { state: { htmlContent } });
+      navigate('report-preview', { state: { htmlContent, transcript } });
     } catch (err) {
       setError(err.message);
     } finally {

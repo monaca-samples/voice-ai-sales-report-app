@@ -11,10 +11,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const ReportPreviewDownload = () => {
   const location = useLocation();
   const htmlContent = location.state.htmlContent;
+  const transcript = location.state.transcript;
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate('/', {}); 
+    navigate('/', { state: { transcript }}); 
   };
 
   return (
