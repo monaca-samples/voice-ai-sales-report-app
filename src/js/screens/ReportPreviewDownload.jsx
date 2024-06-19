@@ -20,7 +20,7 @@ const ReportPreviewDownload = () => {
   return (
     <Box display="flex" flexDirection="column" style={{ margin: '30px'}} gap={2} mx={2}>
       <Box>
-        <Fab style={{ position: 'relative', marginBottom: '10px' }} onClick={handleBack}>
+        <Fab style={{ backgroundColor: 'blue', color: 'white', position: 'relative', marginBottom: '10px' }} onClick={handleBack}>
           <ArrowBackIcon />
         </Fab>
       </Box>

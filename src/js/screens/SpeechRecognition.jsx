@@ -45,6 +45,7 @@ const SpeechRecognitionScreen = () => {
       setError(err.message);
     } finally {
       setIsLoading(false);
+      setTranscript(transcript);
     }
   };
 
@@ -53,6 +54,7 @@ const SpeechRecognitionScreen = () => {
     setContinueRecording(continueRecording);
     if (Capacitor.platform == 'web') {
       alert('Speech recognition is not available here');
+      setTranscript(['Speech recognition is not available here','sales are good'])
       return;
     }
 
