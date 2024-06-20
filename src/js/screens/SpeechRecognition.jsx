@@ -32,7 +32,7 @@ const SpeechRecognitionScreen = () => {
 
   useEffect(() => {
     if (Capacitor.platform == 'web') {
-      alert('Speech recognition is not available here');
+      setError('Speech recognition is not available here');
       setTranscript(['Speech recognition is not available here','sales are good'])
       return;
     }
@@ -41,7 +41,7 @@ const SpeechRecognitionScreen = () => {
       const { speechRecognition } = await SpeechRecognition.requestPermissions();
 
       if (speechRecognition !== 'granted') {
-        alert('Speech recognition is not available here. Check permissions and reopen the app');
+        setError('Speech recognition permission was denied');
       }
     };
   
@@ -75,7 +75,7 @@ const SpeechRecognitionScreen = () => {
     setFirstTime(false);
     setContinueRecording(continueRecording);
     if (Capacitor.platform == 'web') {
-      alert('Speech recognition is not available here');
+      setError('Speech recognition is not available here');
       setTranscript(['Speech recognition is not available here','sales are good'])
       return;
     }
@@ -118,11 +118,6 @@ const SpeechRecognitionScreen = () => {
       setTranscript([...transcript, currentTranscript]);
       setCurrentTranscript('');
       setContinueRecording(false);
-    }
-
-    if (Capacitor.platform == 'web') {
-      alert('Speech recognition is not available here');
-      return;
     }
 
     SpeechRecognition.removeAllListeners();
