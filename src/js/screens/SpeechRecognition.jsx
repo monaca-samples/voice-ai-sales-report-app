@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
@@ -29,6 +29,24 @@ const SpeechRecognitionScreen = () => {
   const [firstTime, setFirstTime] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (Capacitor.platform == 'web') {
+      alert('Speech recognition is not available here');
+      setTranscript(['Speech recognition is not available here','sales are good'])
+      return;
+    }
+
+    const requestPermissions = async () => {
+      const { speechRecognition } = await SpeechRecognition.requestPermissions();
+
+      if (speechRecognition !== 'granted') {
+        alert('Speech recognition is not available here. Check permissions and reopen the app');
+      }
+    };
+  
+    requestPermissions();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -62,38 +80,35 @@ const SpeechRecognitionScreen = () => {
       return;
     }
 
-    const { speechRecognition } = await SpeechRecognition.requestPermissions();
-    if (speechRecognition === 'granted') {
-      SpeechRecognition.start({
-        language: 'en-US',
-        maxResults: 2,
-        prompt: 'Say something',
-        partialResults: true,
-        popup: false,
-      });
-      setIsRecording(true);
+    SpeechRecognition.start({
+      language: 'en-US',
+      maxResults: 2,
+      prompt: 'Say something',
+      partialResults: true,
+      popup: false,
+    });
+    setIsRecording(true);
 
-      let timeoutId = null;
+    let timeoutId = null;
+    if (Capacitor.platform === 'android') {
+      // Set a timeout to stop the recording after 5 seconds
+      timeoutId = setTimeout(stopRecording, 2 * 1000);
+    }
+
+    SpeechRecognition.addListener('partialResults', (data) => {
+      if (continueRecording) {
+        setCurrentTranscript(data.matches[0]);
+      } else {
+        setTranscript([data.matches[0]]);
+      }
+
       if (Capacitor.platform === 'android') {
-        // Set a timeout to stop the recording after 5 seconds
+        // If a result is received, clear the timeout and set a new one
+        clearTimeout(timeoutId);
         timeoutId = setTimeout(stopRecording, 2 * 1000);
       }
 
-      SpeechRecognition.addListener('partialResults', (data) => {
-        if (continueRecording) {
-          setCurrentTranscript(data.matches[0]);
-        } else {
-          setTranscript([data.matches[0]]);
-        }
-
-        if (Capacitor.platform === 'android') {
-          // If a result is received, clear the timeout and set a new one
-          clearTimeout(timeoutId);
-          timeoutId = setTimeout(stopRecording, 2 * 1000);
-        }
-
-      });
-    }
+    });
   };
   
   const stopRecording = async () => {
