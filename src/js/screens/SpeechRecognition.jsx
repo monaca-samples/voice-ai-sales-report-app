@@ -146,8 +146,8 @@ const SpeechRecognitionScreen = () => {
         height: '100vh',
       }}
     >
-    <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
-      <Alert onClose={() => setError(null)} severity="error">
+    <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <Alert onClose={() => setError(null)} severity="error" style={{ width: '100%', wordWrap: 'break-word'}}>
         {error}
       </Alert>
     </Snackbar>
