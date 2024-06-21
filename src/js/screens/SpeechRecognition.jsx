@@ -50,12 +50,16 @@ const SpeechRecognitionScreen = () => {
 
   const navigate = useNavigate();
 
+  const timeout = (ms) => {
+    return new Promise((resolve, reject) => setTimeout(() => reject(new Error('Request timed out')), ms));
+  };
+
   // Generate Report
   const handleGenerateReport = async () => {
     setIsLoading(true);
     try {
       const input = transcript.join(' ') + "Generate a sales report with the previous input in html format. Only return the html";
-      const result = await geminiModel.generateContent(input);
+      const result = await Promise.race([geminiModel.generateContent(input), timeout(30000)]); // 30 seconds timeout
       const response = await result.response;
       if (!response) {
         throw new Error(response.text());
