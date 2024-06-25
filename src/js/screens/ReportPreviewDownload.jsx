@@ -15,7 +15,7 @@ const ReportPreviewDownload = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate('/', { state: { transcript }}); 
+    navigate('/', { state: { transcript }});
   };
 
   return (

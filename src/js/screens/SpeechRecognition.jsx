@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Fab from '@mui/material/Fab';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Box from '@mui/material/Box';
@@ -29,23 +29,42 @@ const SpeechRecognitionScreen = () => {
   const [firstTime, setFirstTime] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const timeoutId = useRef(null);
 
   useEffect(() => {
     if (Capacitor.platform == 'web') {
       setError('Speech recognition is not available here');
-      setTranscript(['Speech recognition is not available here','sales are good'])
+      setTranscript(['Speech recognition is not available here', 'sales are good']);
       return;
     }
-
-    const requestPermissions = async () => {
+  
+    const requestPermissionsAndSetupListeners = async () => {
       const { speechRecognition } = await SpeechRecognition.requestPermissions();
-
+  
       if (speechRecognition !== 'granted') {
         setError('Speech recognition permission was denied');
+        return;
       }
+  
+      // Add listeners
+      SpeechRecognition.addListener('partialResults', (data) => {
+        setCurrentTranscript(data.matches[0]);
+  
+        if (Capacitor.platform === 'android') {
+          // If a result is received, clear the timeout and set a new one
+          clearTimeout(timeoutId.current);
+          timeoutId.current = setTimeout(stopRecording, 2 * 1000);
+        }
+      });
+  
     };
   
-    requestPermissions();
+    requestPermissionsAndSetupListeners();
+  
+    return () => {
+      // Remove listeners on component unmount
+      SpeechRecognition.removeAllListeners();
+    };
   }, []);
 
   const navigate = useNavigate();
@@ -78,6 +97,7 @@ const SpeechRecognitionScreen = () => {
   const startRecording = async (continueRecording = false) => {
     setFirstTime(false);
     setContinueRecording(continueRecording);
+    setCurrentTranscript('');
     if (Capacitor.platform == 'web') {
       setError('Speech recognition is not available here');
       setTranscript(['Speech recognition is not available here','sales are good'])
@@ -93,38 +113,23 @@ const SpeechRecognitionScreen = () => {
     });
     setIsRecording(true);
 
-    let timeoutId = null;
+    timeoutId.current = null;
     if (Capacitor.platform === 'android') {
       // Set a timeout to stop the recording after 5 seconds
-      timeoutId = setTimeout(stopRecording, 2 * 1000);
+      timeoutId.current = setTimeout(stopRecording, 2 * 1000);
     }
-
-    SpeechRecognition.addListener('partialResults', (data) => {
-      if (continueRecording) {
-        setCurrentTranscript(data.matches[0]);
-      } else {
-        setTranscript([data.matches[0]]);
-      }
-
-      if (Capacitor.platform === 'android') {
-        // If a result is received, clear the timeout and set a new one
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(stopRecording, 2 * 1000);
-      }
-
-    });
   };
   
   const stopRecording = async () => {
-
     // Combine the current transcript with the previous ones
     if (continueRecording) {
       setTranscript([...transcript, currentTranscript]);
-      setCurrentTranscript('');
       setContinueRecording(false);
+    } else {
+      setTranscript([currentTranscript]);
     }
+    setCurrentTranscript('');
 
-    SpeechRecognition.removeAllListeners();
     if (Capacitor.platform === 'ios') { // Android stops automatically
       await SpeechRecognition.stop();
     }
@@ -181,7 +186,11 @@ const SpeechRecognitionScreen = () => {
               minRows={10}
               placeholder="Generated text will appear here..."
               style={{ width: '100%', border: 'none'}}
-              value={[...transcript, currentTranscript].join(' ')}
+              value={
+                isRecording
+                  ? (!continueRecording ? currentTranscript : [...transcript, currentTranscript].join(' '))
+                  : transcript.join(' ')
+              }
             />
           </Box>
       
