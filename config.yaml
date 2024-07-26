@@ -43,3 +43,6 @@ platforms:
               - NSCameraUsageDescription: 'Take photos'
               - NSPhotoLibraryAddUsageDescription: 'Add photos'
               - NSPhotoLibraryUsageDescription: 'Access photos'
+              - NSSpeechRecognitionUsageDescription: 'This app uses speech recognition to recognize user voice commands.'
+              - NSMicrophoneUsageDescription: 'This app requires microphone access to capture user voice for speech recognition.'
+
